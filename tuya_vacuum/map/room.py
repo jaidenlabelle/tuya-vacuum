@@ -63,6 +63,12 @@ class Room:
             )
         ]
 
+        # Total size of this room's record: fixed info+name block, plus the
+        # variable-length vertex/polygon data that follows it.
+        self.record_length = (
+            INFO_BYTE_LEN + NAME_BYTE_LEN + 1
+        ) * 2 + self.vertex_num * 2 * 2 * 2
+
         _LOGGER.debug("Finished parsing room")
 
     @staticmethod
@@ -83,8 +89,12 @@ class Room:
             _LOGGER.debug("Parsing room %s", index)
 
             # Parse the data into a new room and add it to list
-            rooms.append(Room(data, byte_pos))
-            # Move to the start of the next room's data
-            byte_pos += (INFO_BYTE_LEN + NAME_BYTE_LEN + 1) * 2
+            room = Room(data, byte_pos)
+            rooms.append(room)
+            # Move to the start of the next room's data. Each room's vertex
+            # (polygon) data has variable length, so it must be skipped too -
+            # otherwise every room after the first is read from the wrong
+            # offset.
+            byte_pos += room.record_length
 
         return rooms

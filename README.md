@@ -10,10 +10,10 @@ pip install tuya-vacuum
 
 ## Usage
 ```python
-from tuya_vacuum import TuyaVacuum
+from tuya_vacuum import Vacuum
 
-# Create a new TuyaVacuum instance
-vacuum = TuyaVacuum(
+# Create a new Vacuum instance
+vacuum = Vacuum(
     origin="https://openapi.tuyaus.com",
     client_id="<Client ID>",
     client_secret="<Client Secret>",
@@ -21,7 +21,7 @@ vacuum = TuyaVacuum(
 )
 
 # Parse the map data
-vacuum_map = vacuum.fetch_realtime_map()
+vacuum_map = vacuum.fetch_map()
 
 # Save the map as an image
 image = vacuum_map.to_image()
@@ -35,7 +35,8 @@ This is a list of all currently tested devices. Create a new [issue](https://git
 | Device                                                | Support                           |
 | ----------------------------------------------------- | --------------------------------- |
 | [Lefant M1](https://www.lefant.com/en-ca/products/m1) | <text style="color:lightgreen">Supported</text> |
-| Kabum Robô Aspirador de Pó 700                        | <text style="color:lightgreen">Supported</text> |
+| Kabum Robô Aspirador de Pó 700 (map layout version 152) | <text style="color:lightgreen">Supported</text> |
+| KaBuM! Smart 700 / Liectroux XR500 (map layout version 1) | <text style="color:lightgreen">Supported</text> |
 
 ## Special Thanks
 - [Tuya Cloud Vacuum Map Extractor](https://github.com/oven-lab/tuya_cloud_map_extractor) by [@oven-lab](https://github.com/oven-lab)

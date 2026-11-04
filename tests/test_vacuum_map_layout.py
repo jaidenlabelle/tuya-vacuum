@@ -93,3 +93,42 @@ def test_vacuum_map_body_v152():
 
         # Should not raise despite there being no room data.
         vacuum_map.to_image()
+
+
+def test_vacuum_map_rooms_with_vertex_data():
+    """Test parsing a version 1 map whose rooms carry real vertex/polygon data.
+
+    Captured from a Liectroux XR500 (sold in Brazil as the Kabum! Smart
+    700), a rebranded Tuya vacuum. Each room here has vertex_num == 32,
+    unlike every other test fixture where it's 0. Room.parse_rooms used to
+    advance byte_pos by a fixed per-room stride that ignored the trailing
+    vertex data, so every room after the first was read from the wrong
+    offset and its name failed to decode as UTF-8.
+    """
+
+    with open("./tests/layout_liectroux_xr500.bin", "rb") as file:
+        data = file.read()
+
+        vacuum_map = Layout(data)
+
+        assert vacuum_map.version == 1
+        assert len(vacuum_map.rooms) == 11
+
+        names = [room.name for room in vacuum_map.rooms]
+        assert names == [
+            "Suíte Master",
+            "Suíte",
+            "Sacada",
+            "Corredor Quarto",
+            "Lavanderia",
+            "Sala de Jantar",
+            "Quarto",
+            "Cozinha",
+            "Quarto Sacada",
+            "Quarto Fundo",
+            "Sala de estar",
+        ]
+        assert all(room.vertex_num == 32 for room in vacuum_map.rooms)
+
+        # Should not raise.
+        vacuum_map.to_image()

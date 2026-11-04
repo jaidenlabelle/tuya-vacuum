@@ -16,6 +16,12 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
+dependencies = [
+    "httpx>=0.27",
+    "numpy>=2.1",
+    "pillow>=11.0",
+    "six>=1.16",
+]
 
 [project.urls]
 Homepage = "https://github.com/jaidenlabelle/tuya-vacuum"
