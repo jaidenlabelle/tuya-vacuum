@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tuya-vacuum"
-version = "0.1.9"
+version = "0.1.10"
 description = "A python library to view maps from Tuya robot vacuums"
 authors = [
     { name = "Jaiden Labelle", email = "jaidenjlabelle@gmail.com" }
