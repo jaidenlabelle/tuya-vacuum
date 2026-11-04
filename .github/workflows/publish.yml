@@ -24,50 +24,6 @@ jobs:
           python-version: "3.x"
       - name: Install pypa/build
         run: python3 -m pip install build --user
-        
-      - name: Set package version
-        env:
-          INPUT_VERSION: ${{ inputs.version }}
-          GIT_TAG: ${{ github.ref_name }}
-          EVENT_NAME: ${{ github.event_name }}
-        run: |
-          python - <<'PY'
-          import os
-          import re
-
-          if os.environ["EVENT_NAME"] == "workflow_dispatch":
-              version = os.environ["INPUT_VERSION"]
-          else:
-              version = os.environ["GIT_TAG"]
-
-          # Remove optional v prefix from Git tags
-          version = version.removeprefix("v")
-
-          # Validate version
-          if not re.fullmatch(r"\d+\.\d+\.\d+", version):
-              raise SystemExit(f"Invalid version: {version}")
-
-          path = "pyproject.toml"
-
-          with open(path, "r") as f:
-              content = f.read()
-
-          content, count = re.subn(
-              r'(?m)^version\s*=\s*"[^"]+"',
-              f'version = "{version}"',
-              content,
-              count=1
-          )
-
-          if count != 1:
-              raise SystemExit("Could not find project version in pyproject.toml")
-
-          with open(path, "w") as f:
-              f.write(content)
-
-          print(f"Package version set to {version}")
-          PY
-        
       # Build the dists from source and store them
       - name: Build a binary wheel and a source tarball
         run: python3 -m build
@@ -125,7 +81,6 @@ jobs:
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', inputs.version) || github.ref_name }}
         run: >-
           gh release create
           '${{ github.ref_name }}'
@@ -134,7 +89,6 @@ jobs:
       - name: Upload artifact signatures to GitHub Release
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', inputs.version) || github.ref_name }}
         # Upload to GitHub Release using the `gh` CLI.
         # `dist/` contains the built pacakges, adn the
         # sigstore-produced signatures and certificates.
